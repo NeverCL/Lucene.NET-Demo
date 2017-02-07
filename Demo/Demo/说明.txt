@@ -1,0 +1,6 @@
+﻿            // 添加字典词库
+			string strFileName = @"d:\Dictionaries\Dict.dct";
+            WordDictionary Dict = new WordDictionary();
+            Dict.Load(strFileName, true, out _Version);
+            Dict.InsertWord("1", 5000);//关键字 词频  词性
+            Dict.Save(strFileName);
