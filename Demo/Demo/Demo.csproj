@@ -68,6 +68,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="盘古分词文档.doc" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Pages\2.txt">
