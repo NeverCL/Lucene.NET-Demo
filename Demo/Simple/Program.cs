@@ -13,6 +13,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using PanGu;
 using Version = Lucene.Net.Util.Version;
+using PanGu.HighLight;
 
 namespace Simple
 {
@@ -20,11 +21,26 @@ namespace Simple
     {
         static DirectoryInfo INDEX_DIR = new DirectoryInfo("index");
         static Analyzer analyzer; //MMSegAnalyzer //StandardAnalyzer
-        private static string KEY = "我要去北京天安门广场";
+        private static string KEY = "我要去北京天安门广场,今天去了发现真大啊";
         static void Main(string[] args)
         {
-            SegmentWordsByPanGuAnalyzer(KEY);
+
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// 高亮
+        /// </summary>
+        static void HighlighterWords()
+        {
+            var formatter = new SimpleHTMLFormatter("<font color=\"red\">", "</font>");
+            //创建 Highlighter ，输入HTMLFormatter 和 盘古分词对象Semgent
+            var highlighter = new Highlighter(formatter, new Segment());
+            //设置每个摘要段的字符数
+            highlighter.FragmentSize = 1000;
+            //获取最匹配的摘要段
+            var str = highlighter.GetBestFragment("北京天安门广场", KEY);
+            Console.WriteLine(str);
         }
 
         /// <summary>
