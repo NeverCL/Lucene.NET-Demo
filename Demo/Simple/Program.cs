@@ -9,6 +9,7 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using PanGu;
@@ -20,11 +21,41 @@ namespace Simple
     class Program
     {
         static DirectoryInfo INDEX_DIR = new DirectoryInfo("index");
-        static Analyzer analyzer; //MMSegAnalyzer //StandardAnalyzer
+        static Analyzer analyzer = new PanGuAnalyzer(); //MMSegAnalyzer //StandardAnalyzer
         private static string KEY = "我要去北京天安门广场,今天去了发现真大啊";
         static void Main(string[] args)
         {
+            while (true)
+            {
+                Console.WriteLine("输入文章:");
+                CreateIndex(new[] { Console.ReadLine() });
 
+                Console.WriteLine("输入关键字:");
+                var words = new Segment().DoSegment(Console.ReadLine(), new PanGu.Match.MatchOptions()
+                {
+                    ChineseNameIdentify = true,
+                    TraditionalChineseEnabled = true,
+                    OutputSimplifiedTraditional = true
+                });
+
+                var phraseQuery = new PhraseQuery { Slop = 100 };           // 词组查询 
+                foreach (var wordInfo in words)
+                {
+                    Console.WriteLine(wordInfo.Word);
+                    phraseQuery.Add(new Term("body", wordInfo.Word));
+                }
+
+                var searcher = new IndexSearcher(FSDirectory.Open(INDEX_DIR), true);
+                var tds = searcher.Search(phraseQuery, 10);
+                Console.WriteLine("TotalHits: " + tds.TotalHits);
+
+                foreach (ScoreDoc sd in tds.ScoreDocs)
+                {
+                    Document doc = searcher.Doc(sd.Doc);
+                    var content = doc.Get("body");
+                    Console.WriteLine(content.Substring(0, 50) + (content.Length > 50 ? "..." : ""));
+                }
+            }
             Console.ReadKey();
         }
 

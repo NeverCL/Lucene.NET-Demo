@@ -94,7 +94,12 @@ namespace Simple
             else
             {
                 var segment = new Segment();
-                ICollection<WordInfo> wordInfos = segment.DoSegment(_inputText);
+                ICollection<WordInfo> wordInfos = segment.DoSegment(_inputText, new PanGu.Match.MatchOptions()
+                {
+                    ChineseNameIdentify = true,
+                    TraditionalChineseEnabled = true,
+                    OutputSimplifiedTraditional = true
+                });
                 _wordList = new WordInfo[wordInfos.Count];
                 wordInfos.CopyTo(_wordList, 0);
             }
