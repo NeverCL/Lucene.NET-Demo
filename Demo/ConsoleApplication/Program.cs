@@ -26,18 +26,17 @@ namespace ConsoleApplication
                 {
                     ChineseNameIdentify = true,
                     TraditionalChineseEnabled = true,
-                    OutputSimplifiedTraditional = true
+                    OutputSimplifiedTraditional = true,
+                    EnglishSegment = true,
+                    IgnoreCapital = true,
+                    FilterStopWords = false,
+                    FrequencyFirst = true
                 };
                 Console.WriteLine("输入文章:");
                 CreateIndex(new[] { Console.ReadLine() });
 
                 Console.WriteLine("输入关键字:");
-                var words = new Segment().DoSegment(Console.ReadLine(), new PanGu.Match.MatchOptions()
-                {
-                    ChineseNameIdentify = true,
-                    TraditionalChineseEnabled = true,
-                    OutputSimplifiedTraditional = true
-                });
+                var words = new Segment().DoSegment(Console.ReadLine(), ANALYZER.Options);
 
                 var phraseQuery = new PhraseQuery { Slop = 100 };           // 词组查询 
                 foreach (var wordInfo in words)
